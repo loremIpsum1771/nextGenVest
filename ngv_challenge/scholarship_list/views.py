@@ -1,3 +1,72 @@
-from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework.parsers import JSONParser
 
-# Create your views here.
+
+class ScholarshipView(APIView):
+    """
+    View which accepts a JSON object and returns a JSON Response
+    Can accept POST requests with JSON content
+    """
+    parser_classes = (JSONParser,)
+    def post(self, request):
+        matrix = request.data["data"]
+        maxProduct, maxList = self.maxPathProduct(matrix, 3)
+        return Response({'sequence': maxList,'total':maxProduct})
+        
+    def maxPathProduct(self, matrix, maxLen):
+        numRows = len(matrix)
+        numCols = len(matrix[0])
+        maxProduct = -1
+        maxList = []      
+        for dir in range(1,4):
+            if dir == 1:
+                numLines = numCols
+            elif dir == 2:
+                numLines = numRows
+            elif dir == 3:
+                numLines = numRows + numCols -1
+            for line in range (0,numLines):
+                pathProduct = 1
+                pathLen = 0
+                if dir == 1:
+                    headRow = 0
+                    headCol = line
+                elif dir ==2:
+                    headCol = 0
+                    headRow = line
+                elif dir == 3:
+                    headRow =  0 if line  >= numRows else line
+                    headCol =  line-numRows if line  >= numRows else 0
+                tailRow = headRow
+                tailCol = headCol
+                pathList = []
+                while headRow < numRows  and headCol < numCols:
+                    pathList.append(matrix[headRow][headCol])
+                    pathProduct *= matrix[headRow][headCol]
+                    pathLen+=1
+                    if pathLen > maxLen:
+                        pathProduct /= matrix[tailRow][tailCol]
+                        pathList = pathList[1:]
+                        if dir== 1:
+                            tailRow += 1
+                        elif dir == 2:
+                            tailCol += 1
+                        elif dir == 3:
+                            tailCol += 1
+                            tailRow += 1
+                    if pathProduct > maxProduct:
+                        maxProduct = pathProduct
+                        maxList = pathList
+                    if dir== 1:
+                            headRow += 1
+                    elif dir == 2:
+                        headCol += 1
+                    elif dir == 3:
+                        headCol += 1
+                        headRow += 1
+
+
+        return maxProduct, maxList
+
+    
