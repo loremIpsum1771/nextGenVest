@@ -24,7 +24,7 @@ This solution features a REST API made using the Django REST framework
 7. Open your browser and navigate [to this url](http://127.0.0.1:8000/scholarship-api)
 
 8. Once on the page, you will see a form where you can enter in JSON data and submit a request. Enter in sample JSON and
-   the "POST" button. Once this is done, you will see the following page:
+   the "POST" button. 
    
  
 ## Some notes on the Code/Algorithm
